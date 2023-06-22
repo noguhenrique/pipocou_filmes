@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "556658927167",
+    "project_id": "pipocou-filmes",
+    "storage_bucket": "pipocou-filmes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556658927167:android:3a52a74f68fdba02957a8a",
+        "android_client_info": {
+          "package_name": "com.example.pipocou_filmes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556658927167-tjsob6a2jthbv7r8glkna859mg4qrqjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx9LIAXjcAqiUz9YsVohR2a4rdDoOyCEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556658927167-5ut6d8ek8lfpal8pntkvr275fjlki1ht.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "556658927167-cplhcp45q0s41ctforjh4rqa2j5rhtvg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.jogo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

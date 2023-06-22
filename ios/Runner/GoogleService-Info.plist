@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>556658927167-sdt038l4t3rb9irh6j0jkmt51kvkn1j5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.556658927167-sdt038l4t3rb9irh6j0jkmt51kvkn1j5</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>556658927167-penei6h792stf0up6osn30t9sb73js4e.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBRp9qmSV6dCV4l2oFMAWt-09E03mHE330</string>
+	<key>GCM_SENDER_ID</key>
+	<string>556658927167</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.pipocouFilmes</string>
+	<key>PROJECT_ID</key>
+	<string>pipocou-filmes</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pipocou-filmes.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:556658927167:ios:9003a175639ff652957a8a</string>
+</dict>
+</plist>

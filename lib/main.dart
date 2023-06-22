@@ -1,4 +1,8 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'package:pipocou_filmes/screens/T01_splash_screen.dart';
 import 'package:pipocou_filmes/screens/T02_tela_login.dart';
 import 'package:pipocou_filmes/screens/T03_tela_cadastro.dart';
@@ -13,7 +17,12 @@ import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
 import 'package:pipocou_filmes/screens/T12_tela_filme.dart';
 import 'package:pipocou_filmes/screens/T13_tela_compartilhamento.dart';
 
-void main() {
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
+FirebaseRemoteConfig.instance.fetchAndActivate();
+
   runApp(PipocouFilmes());
 }
 

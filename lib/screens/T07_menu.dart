@@ -1,3 +1,4 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 class MenuPage extends StatelessWidget {
@@ -6,6 +7,10 @@ class MenuPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Menu'),
+      ),
+      body: Center(
+        child: Container(
+          child: Text(FirebaseRemoteConfig.instance.getString('api_token')))
       ),
     );
   }
