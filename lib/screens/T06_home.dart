@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pipocou_filmes/screens/T07_menu.dart';
 import 'package:pipocou_filmes/screens/T09_pesquisa.dart';
 import 'package:pipocou_filmes/screens/T10_whishlist.dart';
@@ -11,6 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  String _username = '';
 
   final List<Widget> _pages = [
     PlaceholderWidget(text: 'Home'),
@@ -18,6 +21,29 @@ class _HomePageState extends State<HomePage> {
     WishListPage(),
     WatchedListPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+      if (userData.containsKey('username')) {
+        setState(() {
+          _username = userData['username'] ?? '';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +71,14 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           children: [
+            Text('Bem vindo, $_username'),
             _pages[_currentIndex],
             GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/filme');
               },
               child: Image.network(
-                'https://media.filmelier.com/tit/RmUYwf/poster/seu-nome-gravado-em-mim_JKxoMN4.jpeg', // Insira a URL da imagem desejada
+                'https://media.filmelier.com/tit/RmUYwf/poster/seu-nome-gravado-em-mim_JKxoMN4.jpeg',
                 width: 200,
                 height: 200,
               ),
@@ -60,7 +87,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.amber, //cor da label da pagina atual
+        selectedItemColor: Colors.amber,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -69,12 +96,10 @@ class _HomePageState extends State<HomePage> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon:
-                Icon(Icons.home, color: Colors.white), // cor do ícone em espera
-            activeIcon: Icon(Icons.home,
-                color: Colors.amber), // cor do icone da pagina atual
+            icon: Icon(Icons.home, color: Colors.white),
+            activeIcon: Icon(Icons.home, color: Colors.amber),
             label: 'Home',
-            backgroundColor: Colors.blue, // cor do fundo da pagina atual
+            backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search, color: Colors.white),
