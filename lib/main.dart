@@ -45,7 +45,7 @@ class PipocouFilmes extends StatelessWidget {
         '/pesquisa': (context) => PesquisaPage(),
         '/whishlist': (context) => WishListPage(),
         '/watchedlist': (context) => WatchedListPage(),
-        '/filme': (context) => FilmePage(),
+        //'/filme': (context) => FilmePage(),
         '/compartilhamento': (context) => CompartilhamentoPage(),
       },
     );

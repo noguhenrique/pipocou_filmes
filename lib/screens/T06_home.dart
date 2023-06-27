@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pipocou_filmes/API/tmdb_api.dart';
 import 'package:pipocou_filmes/screens/T07_menu.dart';
 import 'package:pipocou_filmes/screens/T09_pesquisa.dart';
 import 'package:pipocou_filmes/screens/T10_whishlist.dart';
 import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
+import 'package:pipocou_filmes/screens/T12_tela_filme.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  List<dynamic> movies = [];
 
   final List<Widget> _pages = [
     PlaceholderWidget(text: 'Home'),
@@ -20,6 +24,22 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    fetchMovies();
+  }
+
+  Future<void> fetchMovies() async {
+    try {
+      List<dynamic> fetchedMovies = await ApiConfig.fetchMovies();
+      setState(() {
+        movies = fetchedMovies;
+      });
+    } catch (e) {
+      print('Error fetching movies: $e');
+    }
+  }
+  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -42,23 +62,42 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          children: [
-            _pages[_currentIndex],
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/filme');
-              },
-              child: Image.network(
-                'https://media.filmelier.com/tit/RmUYwf/poster/seu-nome-gravado-em-mim_JKxoMN4.jpeg', // Insira a URL da imagem desejada
-                width: 200,
-                height: 200,
+      body: GridView.builder(
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        itemCount: movies.length,
+        itemBuilder: (BuildContext context, int index) {
+          final movie = movies[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FilmePage(movie: movie),
+                ),
+              );
+            },
+            child: GridTile(
+              child: CachedNetworkImage(
+                imageUrl: 'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                fit: BoxFit.cover,
+              ),
+              footer: GridTileBar(
+                backgroundColor: Colors.black54,
+                title: Text(
+                  movie['title'],
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
+
+
+      
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.amber, //cor da label da pagina atual
         currentIndex: _currentIndex,
