@@ -14,16 +14,16 @@ import 'package:pipocou_filmes/screens/T08_conta.dart';
 import 'package:pipocou_filmes/screens/T09_pesquisa.dart';
 import 'package:pipocou_filmes/screens/T10_whishlist.dart';
 import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
-import 'package:pipocou_filmes/screens/T12_tela_filme.dart';
+//import 'package:pipocou_filmes/screens/T12_tela_filme.dart';
 import 'package:pipocou_filmes/screens/T13_tela_compartilhamento.dart';
 
 void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
-FirebaseRemoteConfig.instance.fetchAndActivate();
+  );
+  FirebaseRemoteConfig.instance.fetchAndActivate();
 
-  runApp(PipocouFilmes());
+  runApp(const PipocouFilmes());
 }
 
 class PipocouFilmes extends StatelessWidget {
@@ -45,7 +45,7 @@ class PipocouFilmes extends StatelessWidget {
         '/pesquisa': (context) => PesquisaPage(),
         '/whishlist': (context) => WishListPage(),
         '/watchedlist': (context) => WatchedListPage(),
-        //'/filme': (context) => FilmePage(),
+        //  '/filme': (context) => FilmePage(),
         '/compartilhamento': (context) => CompartilhamentoPage(),
       },
     );

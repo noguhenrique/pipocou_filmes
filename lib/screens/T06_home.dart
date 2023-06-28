@@ -16,12 +16,6 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<dynamic> movies = [];
 
-  final List<Widget> _pages = [
-    PlaceholderWidget(text: 'Home'),
-    PesquisaPage(),
-    WishListPage(),
-    WatchedListPage(),
-  ];
 
   @override
   void initState() {
@@ -39,7 +33,8 @@ class _HomePageState extends State<HomePage> {
       print('Error fetching movies: $e');
     }
   }
-  
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -78,12 +73,6 @@ class _HomePageState extends State<HomePage> {
               );
             },
             child: GridTile(
-              child: CachedNetworkImage(
-                imageUrl: 'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                fit: BoxFit.cover,
-              ),
               footer: GridTileBar(
                 backgroundColor: Colors.black54,
                 title: Text(
@@ -91,35 +80,66 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center,
                 ),
               ),
+              child: CachedNetworkImage(
+                imageUrl:
+                    'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                fit: BoxFit.cover,
+              ),
             ),
           );
         },
       ),
 
-
-      
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.amber, //cor da label da pagina atual
+        selectedItemColor: Colors.amber,
         currentIndex: _currentIndex,
         onTap: (index) {
+          if(index == 1){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PesquisaPage(),
+                ),
+              );
+          }
+          else if(index ==2){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WishListPage(),
+                ),
+              );
+          }
+          else if(index ==3){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WatchedListPage(),
+                ),
+              );
+          }
+
           setState(() {
             _currentIndex = index;
-          });
+          }
+          );
         },
         items: const [
           BottomNavigationBarItem(
-            icon:
-                Icon(Icons.home, color: Colors.white), // cor do ícone em espera
-            activeIcon: Icon(Icons.home,
-                color: Colors.amber), // cor do icone da pagina atual
+            icon: Icon(Icons.home, color: Colors.white),
+            activeIcon: Icon(Icons.home, color: Colors.amber),
             label: 'Home',
-            backgroundColor: Colors.blue, // cor do fundo da pagina atual
+            backgroundColor: Colors.blue,
           ),
+          
           BottomNavigationBarItem(
             icon: Icon(Icons.search, color: Colors.white),
             activeIcon: Icon(Icons.search, color: Colors.amber),
             label: 'Pesquisa',
             backgroundColor: Colors.blue,
+            
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite, color: Colors.white),
@@ -134,22 +154,6 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Colors.blue,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class PlaceholderWidget extends StatelessWidget {
-  final String text;
-
-  PlaceholderWidget({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 20),
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class FilmePage extends StatelessWidget {
 final dynamic movie;
 
-FilmePage({required this.movie});
+const FilmePage({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ FilmePage({required this.movie});
         title: Text(movie['title']),
         actions: [
           IconButton(
-            icon: Icon(Icons.share),
+            icon: const Icon(Icons.share),
             onPressed: () {
               Navigator.pushNamed(context, '/compartilhamento');
             },
@@ -34,44 +34,44 @@ FilmePage({required this.movie});
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Overview',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(movie['overview']),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Rating',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   RatingBarIndicator(
                     rating: movie['vote_average'].toDouble() / 2,
                     itemCount: 5,
                     itemSize: 20.0,
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, _) => Icon(
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, _) => const Icon(
                       Icons.star,
                       color: Colors.amber,
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Cast',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text('Load cast information here...'),
+                  const SizedBox(height: 8),
+                  const Text('Load cast information here...'),
                 ],
               ),
             ),
