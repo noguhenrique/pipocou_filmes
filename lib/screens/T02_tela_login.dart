@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'T03_tela_cadastro.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'T04_tela_confirmacao_email.dart';
-
+import 'T03_tela_cadastro.dart';
+import 'T06_home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -13,10 +14,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  bool _isShowPassword = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -67,24 +66,11 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _passwordController,
                 cursorColor: Colors.black,
-                obscureText: !_isShowPassword,
+                obscureText: true,
                 validator: _passwordValidator,
                 decoration: InputDecoration(
                   hintText: 'Password',
                   hintStyle: const TextStyle(fontSize: 14, color: Colors.black54),
-                  suffixIcon: IconButton(
-                    color: Colors.black,
-                    onPressed: () {
-                      if (!mounted) return;
-
-                      setState(() {
-                        _isShowPassword = !_isShowPassword;
-                      });
-                    },
-                    icon: Icon(
-                      _isShowPassword ? Icons.visibility_off : Icons.remove_red_eye_outlined,
-                    ),
-                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: const BorderSide(color: Colors.black),
@@ -105,37 +91,24 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _signIn,
+                onPressed: _isLoading ? null : _signIn,
                 child: Text(
                   'Sign In',
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
               ),
-              const SizedBox(height: 20),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ConfirmacaoEmailPage(),
-                    ),
-                  );
-                },
+                onPressed: _isLoading ? null : _forgotPassword,
                 child: Text(
-                  'Esqueceu sua senha?',
-                  style: TextStyle(fontSize: 16, color: Colors.blue),
+                  'Esqueceu sua senha',
+                  style: const TextStyle(fontSize: 16, color: Colors.blue),
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CadastroPage(),
-                    ),
-                  );
-                },
+                onPressed: _isLoading ? null : _navigateToCadastroPage,
                 child: Text(
                   'Cadastre-se',
-                  style: TextStyle(fontSize: 16, color: Colors.blue),
+                  style: const TextStyle(fontSize: 16, color: Colors.blue),
                 ),
               ),
             ],
@@ -154,26 +127,78 @@ class _LoginPageState extends State<LoginPage> {
 
   String? _passwordValidator(String? inputVal) {
     if (inputVal == null || inputVal.isEmpty) {
-      return 'Insira um email válido';
+      return 'Provide a valid password';
     }
 
     if (inputVal.length < 8) {
-      return 'A senha deve ter ao menos 8 caracteres';
+      return 'Password must be at least 8 characters long';
     }
 
     return null;
   }
 
-  void _signIn() async {
+  Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    // Perform sign-in logic here
+    setState(() {
+      _isLoading = true;
+    });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Sign In pressed'),
+    try {
+      final String email = _emailController.text.trim();
+      final String password = _passwordController.text;
+
+      // Sign in user with Firebase
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Redirect to HomePage after successful login
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomePage(),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'An error occurred while signing in';
+
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        errorMessage = 'Invalid email or password';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred while signing in'),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _forgotPassword() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ConfirmacaoEmailPage(),
+      ),
+    );
+  }
+
+  void _navigateToCadastroPage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CadastroPage(),
       ),
     );
   }
