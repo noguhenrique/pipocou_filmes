@@ -18,6 +18,7 @@ import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
 import 'package:pipocou_filmes/screens/T13_tela_compartilhamento.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

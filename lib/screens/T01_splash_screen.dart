@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: 3),
     );
 
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
@@ -35,15 +36,23 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow,
+            //backgroundColor: Colors.yellow,
       body: Center(
         child: FadeTransition(
           opacity: _animation,
-          child: FlutterLogo(
-            size: 150,
+          child: Container(
+            width:Get.width,
+            height:Get.height ,
+            decoration:const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/splashscreen.png'),
+                fit: BoxFit.cover)
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+      
