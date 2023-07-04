@@ -16,7 +16,6 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<dynamic> movies = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -36,6 +35,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final firstMovie = movies.isNotEmpty ? movies.first : null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Pipocou Filmes'),
@@ -57,74 +58,138 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: GridView.builder(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: movies.length,
-        itemBuilder: (BuildContext context, int index) {
-          final movie = movies[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => FilmePage(movie: movie),
-                ),
-              );
-            },
-            child: GridTile(
-              footer: GridTileBar(
-                backgroundColor: Colors.black54,
-                title: Text(
-                  movie['title'],
-                  textAlign: TextAlign.center,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (firstMovie != null) ...[
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => FilmePage(movie: firstMovie)),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl:
+                            'https://image.tmdb.org/t/p/original${firstMovie['backdrop_path']}',
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        fit: BoxFit.cover,
+                        height: 300,
+                      ),
+                      Text(
+                        firstMovie['title'],
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        firstMovie['overview'],
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: CachedNetworkImage(
-                imageUrl:
-                    'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                fit: BoxFit.cover,
+            ],
+            if (movies.length > 1) ...[
+              const SizedBox(height: 16),
+              Container( //titulo "em alta"
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: const Text(
+                  "Em alta",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-          );
-        },
+              SizedBox(  //widget de filmes em alta com scroll horizontal
+                height: 300,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: movies.length - 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    final movie = movies[index + 1];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => FilmePage(movie: movie)),
+                        );
+                      },
+                      child: SizedBox(
+                        width: 200,
+                        child: Card(
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  movie['title'],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.amber,
         currentIndex: _currentIndex,
         onTap: (index) {
-          if(index == 1){
+          if (index == 1) {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PesquisaPage(),
-                ),
-              );
-          }
-          else if(index ==2){
+              context,
+              MaterialPageRoute(
+                builder: (_) => PesquisaPage(),
+              ),
+            );
+          } else if (index == 2) {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => WishListPage(),
-                ),
-              );
-          }
-          else if(index ==3){
+              context,
+              MaterialPageRoute(
+                builder: (_) => WishListPage(),
+              ),
+            );
+          } else if (index == 3) {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => WatchedListPage(),
-                ),
-              );
+              context,
+              MaterialPageRoute(
+                builder: (_) => WatchedListPage(),
+              ),
+            );
           }
 
           setState(() {
             _currentIndex = index;
-          }
-          );
+          });
         },
         items: const [
           BottomNavigationBarItem(
@@ -133,13 +198,11 @@ class _HomePageState extends State<HomePage> {
             label: 'Home',
             backgroundColor: Colors.blue,
           ),
-          
           BottomNavigationBarItem(
             icon: Icon(Icons.search, color: Colors.white),
             activeIcon: Icon(Icons.search, color: Colors.amber),
             label: 'Pesquisa',
             backgroundColor: Colors.blue,
-            
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite, color: Colors.white),
