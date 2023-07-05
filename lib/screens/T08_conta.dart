@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'T04_tela_confirmacao_email.dart';
 
 class ContaPage extends StatefulWidget {
   @override
@@ -73,6 +74,34 @@ class _ContaPageState extends State<ContaPage> {
                   }
                 }
                 Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showChangePasswordDialog() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alteração de senha'),
+          content: Text('Tem certeza de que deseja alterar a senha?'),
+          actions: [
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Continuar'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ConfirmacaoEmailPage()),
+                );
               },
             ),
           ],
@@ -181,6 +210,17 @@ class _ContaPageState extends State<ContaPage> {
             title: Text('Alterar email'),
             onTap: () {
               _showChangeEmailDialog();
+            },
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+          ListTile(
+            leading: Icon(Icons.lock),
+            title: Text('Alterar senha'),
+            onTap: () {
+              _showChangePasswordDialog();
             },
           ),
           Divider(
