@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'T04_tela_confirmacao_email.dart';
 
 class ContaPage extends StatefulWidget {
@@ -9,19 +10,27 @@ class ContaPage extends StatefulWidget {
 
 class _ContaPageState extends State<ContaPage> {
   String? _userEmail;
+  String? _userName;
+  TextEditingController _nameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadUserEmail();
+    _loadUserData();
   }
 
-  Future<void> _loadUserEmail() async {
+  Future<void> _loadUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      setState(() {
-        _userEmail = user.email;
-      });
+      String userId = user.uid;
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('usuarios').doc(userId).get();
+      if (snapshot.exists) {
+        setState(() {
+          _userEmail = user.email;
+          _userName = snapshot.get('nome');
+          _nameController.text = _userName ?? '';
+        });
+      }
     }
   }
 
@@ -117,7 +126,7 @@ class _ContaPageState extends State<ContaPage> {
         return AlertDialog(
           title: Text('Apagar conta'),
           content: Text('Tem certeza de que deseja apagar a conta? Esta ação não pode ser desfeita.'),
-          actions: [
+actions: [
             TextButton(
               child: Text('Cancelar'),
               onPressed: () {
@@ -184,6 +193,61 @@ class _ContaPageState extends State<ContaPage> {
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
+  Future<void> _showChangeNameDialog() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alterar nome'),
+          content: TextFormField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: 'Novo nome',
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Salvar'),
+              onPressed: () async {
+                String newName = _nameController.text.trim();
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  try {
+                    String userId = user.uid;
+                    await FirebaseFirestore.instance.collection('usuarios').doc(userId).update({
+                      'nome': newName,
+                    });
+                    setState(() {
+                      _userName = newName;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Nome alterado com sucesso.'),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erro ao alterar o nome.'),
+                      ),
+                    );
+                  }
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,11 +259,15 @@ class _ContaPageState extends State<ContaPage> {
           ListTile(
             leading: Icon(Icons.person),
             title: Text(
-              'Bem vindo, $_userEmail',
+              'Bem-vindo, $_userName',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.mail),
+            title: Text('Email: $_userEmail'),
           ),
           Divider(
             thickness: 1,
@@ -213,50 +281,61 @@ class _ContaPageState extends State<ContaPage> {
             },
           ),
           Divider(
-            thickness: 1,
-            color: Colors.black,
-          ),
-          ListTile(
-            leading: Icon(Icons.lock),
-            title: Text('Alterar senha'),
-            onTap: () {
-              _showChangePasswordDialog();
-            },
-          ),
-          Divider(
-            thickness: 1,
-            color: Colors.black,
-          ),
-          ListTile(
-            leading: Icon(Icons.delete),
-            title: Text(
-              'Apagar conta',
-              style: TextStyle(
-                color: Colors.red,
-              ),
+          thickness: 1,
+          color: Colors.black,
+        ),
+        ListTile(
+          leading: Icon(Icons.lock),
+          title: Text('Alterar senha'),
+          onTap: () {
+            _showChangePasswordDialog();
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.black,
+        ),
+        ListTile(
+          leading: Icon(Icons.create),
+          title: Text('Alterar nome'),
+          onTap: () {
+            _showChangeNameDialog();
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.black,
+        ),
+        ListTile(
+          leading: Icon(Icons.delete),
+          title: Text(
+            'Apagar conta',
+            style: TextStyle(
+              color: Colors.red,
             ),
-            onTap: () {
-              _showDeleteAccountDialog();
-            },
           ),
-          Divider(
-            thickness: 1,
-            color: Colors.black,
-          ),
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: Text(
-              'Logout',
-              style: TextStyle(
-                color: Colors.blue,
-              ),
+          onTap: () {
+            _showDeleteAccountDialog();
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.black,
+        ),
+        ListTile(
+          leading: Icon(Icons.logout),
+          title: Text(
+            'Logout',
+            style: TextStyle(
+              color: Colors.blue,
             ),
-            onTap: () {
-              _confirmLogout();
-            },
           ),
-        ],
-      ),
-    );
-  }
+          onTap: () {
+            _confirmLogout();
+          },
+        ),
+      ],
+    ),
+  );
+}
 }

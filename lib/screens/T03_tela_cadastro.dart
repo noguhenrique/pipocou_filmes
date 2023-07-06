@@ -1,7 +1,6 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'T06_home.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -228,7 +227,7 @@ class _CadastroPageState extends State<CadastroPage> {
     final String password = _passwordController.text;
 
     if (inputVal != password) {
-      return 'Passwords do not match';
+      return 'Passwords do notmatch';
     }
 
     return null;
@@ -262,10 +261,16 @@ class _CadastroPageState extends State<CadastroPage> {
       }
 
       // Create user with email and password in Firebase
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // Store the username in the user's document in Firestore
+      String uid = userCredential.user!.uid;
+      await FirebaseFirestore.instance.collection('usuarios').doc(uid).set({
+        'nome': username,
+      });
 
       // Redirect to HomePage after successful signup
       Navigator.of(context).pushReplacement(
