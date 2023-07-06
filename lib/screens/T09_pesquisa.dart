@@ -40,9 +40,10 @@ class _PesquisaPageState extends State<PesquisaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pipocou Filmes'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          icon: Icon(Icons.menu, color: Colors.black),
           onPressed: () {
             Navigator.push(
               context,
@@ -52,12 +53,23 @@ class _PesquisaPageState extends State<PesquisaPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
+            icon: Icon(
+              Icons.person,
+              color: Colors.black,
+            ),
             onPressed: () {
               Navigator.pushNamed(context, '/conta');
             },
           ),
         ],
+        title: Container(
+          alignment: Alignment.center,
+          child: Image.asset(
+            'assets/images/nometitulo.png',
+            fit: BoxFit.contain,
+            height: 80,
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -164,7 +176,7 @@ class _PesquisaPageState extends State<PesquisaPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.amber,
+        selectedItemColor: Color.fromARGB(255, 10, 63, 106),
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 0) {
@@ -172,6 +184,13 @@ class _PesquisaPageState extends State<PesquisaPage> {
               context,
               MaterialPageRoute(
                 builder: (_) => HomePage(),
+              ),
+            );
+          } else if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PesquisaPage(),
               ),
             );
           } else if (index == 2) {
@@ -196,28 +215,32 @@ class _PesquisaPageState extends State<PesquisaPage> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.white),
-            activeIcon: Icon(Icons.home, color: Colors.amber),
+            icon: Icon(Icons.home, color: Colors.black),
+            activeIcon:
+                Icon(Icons.home, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Home',
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search, color: Colors.white),
-            activeIcon: Icon(Icons.search, color: Colors.amber),
+            icon: Icon(Icons.search, color: Colors.black),
+            activeIcon:
+                Icon(Icons.search, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Pesquisa',
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.white),
-            activeIcon: Icon(Icons.favorite, color: Colors.amber),
+            icon: Icon(Icons.favorite, color: Colors.black),
+            activeIcon:
+                Icon(Icons.favorite, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Wishlist',
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_play, color: Colors.white),
-            activeIcon: Icon(Icons.playlist_play, color: Colors.amber),
+            icon: Icon(Icons.playlist_play, color: Colors.black),
+            activeIcon: Icon(Icons.playlist_play,
+                color: Color.fromARGB(255, 8, 73, 126)),
             label: 'WatchedList',
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.white,
           ),
         ],
       ),

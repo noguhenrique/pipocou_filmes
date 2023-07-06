@@ -1,20 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pipocou_filmes/API/tmdb_api.dart';
+import 'package:pipocou_filmes/screens/T06_home.dart';
 
-class FilmePage extends StatelessWidget {
+class FilmePage extends StatefulWidget {
   final dynamic movie;
 
   const FilmePage({Key? key, required this.movie}) : super(key: key);
 
   @override
+  _FilmePageState createState() => _FilmePageState();
+}
+
+class _FilmePageState extends State<FilmePage> {
+  List<dynamic> movieCredits = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMovieCredits();
+  }
+
+  Future<void> fetchMovieCredits() async {
+    try {
+      final List<dynamic> fetchedCredits =
+          await ApiConfig.fetchMovieCredits(widget.movie['id']);
+      setState(() {
+        movieCredits = fetchedCredits;
+      });
+    } catch (e) {
+      print('Error fetching movie credits: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(movie['title']),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_sharp, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
+        title: Container(
+          alignment: Alignment.center,
+          child: Text(
+            widget.movie['title'],
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: const Icon(Icons.share, color: Colors.black),
             onPressed: () {
               Navigator.pushNamed(context, '/compartilhamento');
             },
@@ -36,7 +79,7 @@ class FilmePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       image: NetworkImage(
-                        'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                        'https://image.tmdb.org/t/p/w500${widget.movie['poster_path']}',
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -47,41 +90,41 @@ class FilmePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
                       Text(
-                        'Data de lançamento: ${movie['release_date']}',
+                        'Data de lançamento: ${widget.movie['release_date']}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
                       Text(
-                        'Avaliação do público: ${movie['vote_average'].toDouble()}',
+                        'Avaliação do público: ${widget.movie['vote_average'].toDouble()}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
                       Text(
-                        'Classificação indicativa: ${movie['adult'] ? '18+' : 'Livre'}',
+                        'Classificação indicativa: ${widget.movie['adult'] ? '18+' : 'Livre'}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
                       Text(
-                        'Duração: ${movie['runtime'] != null ? '${movie['runtime'].toString()} minutos' : 'N/A'}',
+                        'Duração: ${widget.movie['runtime'] != null ? '${widget.movie['runtime'].toString()} minutos' : 'N/A'}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
                       RatingBarIndicator(
-                        rating: movie['vote_average'].toDouble() / 2,
+                        rating: widget.movie['vote_average'].toDouble() / 2,
                         itemCount: 5,
                         itemSize: 20.0,
                         physics: const BouncingScrollPhysics(),
@@ -109,7 +152,7 @@ class FilmePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Text(movie['overview']),
+                  Text(widget.movie['overview']),
                   SizedBox(height: 16),
                   const Text(
                     'Gênero',
@@ -125,7 +168,7 @@ class FilmePage extends StatelessWidget {
                       if (snapshot.hasData) {
                         List<dynamic> movieGenres = snapshot.data!;
                         List genreNames = getGenreNames(
-                            movie['genre_ids'], movieGenres);
+                            widget.movie['genre_ids'], movieGenres);
                         return Wrap(
                           spacing: 8,
                           runSpacing: 8,
@@ -165,8 +208,9 @@ class FilmePage extends StatelessWidget {
                     height: 120,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: 5,
+                      itemCount: movieCredits.length,
                       itemBuilder: (context, index) {
+                        final actor = movieCredits[index];
                         return Padding(
                           padding: EdgeInsets.only(right: 8),
                           child: Column(
@@ -178,7 +222,7 @@ class FilmePage extends StatelessWidget {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      'https://via.placeholder.com/80',
+                                      'https://image.tmdb.org/t/p/w500${actor['profile_path']}',
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -186,7 +230,7 @@ class FilmePage extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                'Actor $index',
+                                actor['name'],
                                 style: TextStyle(fontSize: 12),
                               ),
                             ],
