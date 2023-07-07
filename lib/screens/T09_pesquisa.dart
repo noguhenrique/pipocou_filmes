@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pipocou_filmes/API/tmdb_api.dart';
@@ -15,6 +17,8 @@ class PesquisaPage extends StatefulWidget {
 class _PesquisaPageState extends State<PesquisaPage> {
   int _currentIndex = 1;
   List<dynamic> searchResults = [];
+  List<String> favorites = [];
+  String? userID;
 
   Future<void> searchMovies(String query) async {
     try {
@@ -27,6 +31,60 @@ class _PesquisaPageState extends State<PesquisaPage> {
     }
   }
 
+Future<String?> getCurrentUserID() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    return user.uid;
+  } else {
+    return null;
+  }
+}
+
+  void toggleFavorite(String movieTitle) async {
+    if (userID == null) {
+      userID = await getCurrentUserID();
+      if (userID == null) {
+        // Lide com o caso em que o userID não pôde ser obtido
+        return;
+      }
+    }
+
+    setState(() {
+      if (favorites.contains(movieTitle)) {
+        favorites.remove(movieTitle);
+        removeFavoriteFromFirebase(userID!, movieTitle);
+      } else {
+        favorites.add(movieTitle);
+        addFavoriteToFirebase(userID!, movieTitle, 'Gênero do filme');
+      }
+    });
+  }
+
+  void addFavoriteToFirebase(String userID, String movieTitle, String movieGenre) {
+    FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(userID)
+        .collection('userFavorites')
+        .add({
+          'title': movieTitle,
+          'genre': movieGenre,
+        });
+  }
+
+  void removeFavoriteFromFirebase(String userID, String movieTitle) {
+    FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(userID)
+        .collection('userFavorites')
+        .where('title', isEqualTo: movieTitle)
+        .get()
+        .then((querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            doc.reference.delete();
+          });
+        });
+  }
+
   void navigateToFilmePage(dynamic movie) {
     Navigator.push(
       context,
@@ -34,6 +92,31 @@ class _PesquisaPageState extends State<PesquisaPage> {
         builder: (_) => FilmePage(movie: movie),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFavoritesFromFirebase();
+  }
+
+  void fetchFavoritesFromFirebase() async {
+    userID = await getCurrentUserID();
+    if (userID != null) {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('usuarios').doc(userID).collection('userFavorites').get();
+
+      List<String> fetchedFavorites = [];
+
+      querySnapshot.docs.forEach((doc) {
+        String title = doc.get('title');
+        fetchedFavorites.add(title);
+      });
+
+      setState(() {
+        favorites = fetchedFavorites;
+      });
+    }
   }
 
   @override
@@ -98,6 +181,9 @@ class _PesquisaPageState extends State<PesquisaPage> {
                 itemCount: searchResults.length,
                 itemBuilder: (BuildContext context, int index) {
                   final movie = searchResults[index];
+                  final movieTitle = movie['title'];
+                  final isFavorite = favorites.contains(movieTitle);
+
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     child: InkWell(
@@ -132,7 +218,7 @@ class _PesquisaPageState extends State<PesquisaPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    movie['title'],
+                                    movieTitle,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -161,6 +247,17 @@ class _PesquisaPageState extends State<PesquisaPage> {
                                       Icons.star,
                                       color: Colors.amber,
                                     ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      isFavorite
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isFavorite ? Colors.red : null,
+                                    ),
+                                    onPressed: () {
+                                      toggleFavorite(movieTitle);
+                                    },
                                   ),
                                 ],
                               ),
