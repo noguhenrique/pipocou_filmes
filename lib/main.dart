@@ -28,7 +28,7 @@ void main() async {
 }
 
 class PipocouFilmes extends StatelessWidget {
-  const PipocouFilmes({super.key});
+  const PipocouFilmes({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

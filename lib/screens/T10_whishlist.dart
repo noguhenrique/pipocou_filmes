@@ -124,7 +124,7 @@ class _WishListPageState extends State<WishListPage> {
 }*/
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class WishListPage extends StatefulWidget {
@@ -145,7 +145,7 @@ class _WishListPageState extends State<WishListPage> {
     // Obtenha o ID do usuário atual (você pode usar o mesmo método que definiu em PesquisaPage)
     String? userID = 'User';
 
-    if (userID != null) {
+    if (userID!= null) {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('usuarios')
           .doc(userID)
