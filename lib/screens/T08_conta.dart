@@ -126,7 +126,7 @@ class _ContaPageState extends State<ContaPage> {
         return AlertDialog(
           title: Text('Apagar conta'),
           content: Text('Tem certeza de que deseja apagar a conta? Esta ação não pode ser desfeita.'),
-actions: [
+          actions: [
             TextButton(
               child: Text('Cancelar'),
               onPressed: () {
@@ -138,7 +138,13 @@ actions: [
               onPressed: () async {
                 User? user = FirebaseAuth.instance.currentUser;
                 if (user != null) {
+                  String userId = user.uid;
+
+                  // Apagar o documento "usuarios" do usuário no Cloud Firestore
+                  await FirebaseFirestore.instance.collection('usuarios').doc(userId).delete();
+
                   try {
+                    // Apagar a conta do usuário
                     await user.delete();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -274,68 +280,68 @@ actions: [
             color: Colors.black,
           ),
           ListTile(
-            leading: Icon(Icons.mail),
+leading: Icon(Icons.mail),
             title: Text('Alterar email'),
             onTap: () {
               _showChangeEmailDialog();
             },
           ),
           Divider(
-          thickness: 1,
-          color: Colors.black,
-        ),
-        ListTile(
-          leading: Icon(Icons.lock),
-          title: Text('Alterar senha'),
-          onTap: () {
-            _showChangePasswordDialog();
-          },
-        ),
-        Divider(
-          thickness: 1,
-          color: Colors.black,
-        ),
-        ListTile(
-          leading: Icon(Icons.create),
-          title: Text('Alterar nome'),
-          onTap: () {
-            _showChangeNameDialog();
-          },
-        ),
-        Divider(
-          thickness: 1,
-          color: Colors.black,
-        ),
-        ListTile(
-          leading: Icon(Icons.delete),
-          title: Text(
-            'Apagar conta',
-            style: TextStyle(
-              color: Colors.red,
-            ),
+            thickness: 1,
+            color: Colors.black,
           ),
-          onTap: () {
-            _showDeleteAccountDialog();
-          },
-        ),
-        Divider(
-          thickness: 1,
-          color: Colors.black,
-        ),
-        ListTile(
-          leading: Icon(Icons.logout),
-          title: Text(
-            'Logout',
-            style: TextStyle(
-              color: Colors.blue,
-            ),
+          ListTile(
+            leading: Icon(Icons.lock),
+            title: Text('Alterar senha'),
+            onTap: () {
+              _showChangePasswordDialog();
+            },
           ),
-          onTap: () {
-            _confirmLogout();
-          },
-        ),
-      ],
-    ),
-  );
-}
+          Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+          ListTile(
+            leading: Icon(Icons.create),
+            title: Text('Alterar nome'),
+            onTap: () {
+              _showChangeNameDialog();
+            },
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+          ListTile(
+            leading: Icon(Icons.delete),
+            title: Text(
+              'Apagar conta',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+            onTap: () {
+              _showDeleteAccountDialog();
+            },
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text(
+              'Logout',
+              style: TextStyle(
+                color: Colors.blue,
+              ),
+            ),
+            onTap: () {
+              _confirmLogout();
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }
