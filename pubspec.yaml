@@ -45,6 +45,7 @@ dependencies:
   cloud_firestore: ^4.8.2
   url_launcher: ^6.1.11
   share: ^2.0.4
+  flutter_share: ^2.0.0
 
 dev_dependencies:
   flutter_test:

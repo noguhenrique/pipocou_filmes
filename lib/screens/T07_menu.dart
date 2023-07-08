@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share/share.dart';
 
 class MenuPage extends StatelessWidget {
   final String _appVersion = "1.0.0";
+  final String _appShareMessage =
+      "Olha que aplicativo interessante, chama-se Pipocou Filmes! Baixe também em: https://play.google.com/store/apps/details?id=pipocoufilmes";
 
   Future<void> _launchURL(String url) async {
     if (await canLaunch(url)) {
@@ -10,6 +13,10 @@ class MenuPage extends StatelessWidget {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  void _shareMessage(String message, {String? subject}) {
+    Share.share(message, subject: subject);
   }
 
   @override
@@ -99,7 +106,7 @@ class MenuPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
                     _launchURL(
@@ -114,14 +121,13 @@ class MenuPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
-                    _launchURL(
-                        'https://docs.google.com/document/d/e/2PACX-1vQGU6x4N3boEbyIziC0NBWofk2JlJa3BF1OIQTMYTfOic1tQaOHcivjQFgIZmY3lcHtyiUimfYldN2V/pub');
+                    _shareMessage(_appShareMessage);
                   },
                   child: Text(
-                    'Compártilhe com amigos',
+                    'Compartilhe com amigos',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.blue,
@@ -129,10 +135,10 @@ class MenuPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
-                    _launchURL(
+                    launch(
                         'https://docs.google.com/document/d/e/2PACX-1vQGU6x4N3boEbyIziC0NBWofk2JlJa3BF1OIQTMYTfOic1tQaOHcivjQFgIZmY3lcHtyiUimfYldN2V/pub');
                   },
                   child: Text(
@@ -144,15 +150,15 @@ class MenuPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
                 Text(
                   'Versão $_appVersion',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
               ],
             ),
           ),
