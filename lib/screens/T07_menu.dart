@@ -1,36 +1,167 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuPage extends StatelessWidget {
+  final String _appVersion = "1.0.0";
+
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.black, // Define a cor do ícone como preto
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
           ),
-          title: const Text(
-            'Menu',
-            style: TextStyle(
-              color: Colors.black, // Define a cor do texto como preto
-            ),
-          ),
-          backgroundColor:
-              Colors.transparent, // Define o plano de fundo como transparente
-          elevation: 0.0, // Remove a sombra padrão da AppBar
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: ListView(
-          children: [
-            const Divider(
-              color: Colors.black, // Define a cor da linha separadora
-              thickness: 1.0, // Define a espessura da linha separadora
+        title: Text(
+          'Menu',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+      ),
+      body: ListView(
+        children: [
+          Divider(
+            color: Colors.black,
+            thickness: 1.0,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
             ),
-          ],
-        ));
+            leading: Icon(
+              Icons.notifications_active,
+              size: 50,
+            ),
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Notificações',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  'Receba notificações diárias do aplicativo.',
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+            dense: true,
+            visualDensity: VisualDensity.compact,
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            leading: Icon(
+              Icons.movie_filter,
+              size: 50,
+            ),
+            title: Text(
+              'Pipocou Filmes',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            dense: true,
+            visualDensity: VisualDensity.compact,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    _launchURL(
+                        'https://play.google.com/store/apps/details?id=pipocoufilmes');
+                  },
+                  child: Text(
+                    'Avalie o app',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    _launchURL(
+                        'https://docs.google.com/document/d/e/2PACX-1vQGU6x4N3boEbyIziC0NBWofk2JlJa3BF1OIQTMYTfOic1tQaOHcivjQFgIZmY3lcHtyiUimfYldN2V/pub');
+                  },
+                  child: Text(
+                    'Compártilhe com amigos',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    _launchURL(
+                        'https://docs.google.com/document/d/e/2PACX-1vQGU6x4N3boEbyIziC0NBWofk2JlJa3BF1OIQTMYTfOic1tQaOHcivjQFgIZmY3lcHtyiUimfYldN2V/pub');
+                  },
+                  child: Text(
+                    'Termos de Uso e Política de Privacidade',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Versão $_appVersion',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+          Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+        ],
+      ),
+    );
   }
 }

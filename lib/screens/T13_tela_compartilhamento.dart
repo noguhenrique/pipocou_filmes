@@ -14,7 +14,7 @@ class CompartilhamentoPage extends StatelessWidget {
           },
         ),
         title: Container(
-          alignment: Alignment.center,
+          alignment: Alignment.centerLeft,
           child: const Text(
             'Compartilhamento',
             style: TextStyle(color: Colors.black),

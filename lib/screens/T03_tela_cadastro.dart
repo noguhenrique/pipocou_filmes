@@ -218,7 +218,7 @@ class _CadastroPageState extends State<CadastroPage> {
                             child: GestureDetector(
                               onTap: () {
                                 launch(
-                                    'https://app.uizard.io/prototypes/nY7EgArxW0SlY1XK1gjM/player/preview');
+                                    'https://docs.google.com/document/d/e/2PACX-1vQGU6x4N3boEbyIziC0NBWofk2JlJa3BF1OIQTMYTfOic1tQaOHcivjQFgIZmY3lcHtyiUimfYldN2V/pub');
                               },
                               child: Text(
                                 'Li e concordo com os Termos de Uso e Política de Privacidade',
