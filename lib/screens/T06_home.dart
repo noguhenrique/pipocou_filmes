@@ -19,6 +19,10 @@ class _HomePageState extends State<HomePage> {
   List<dynamic> comedyMovies = [];
   List<dynamic> actionMovies = [];
   List<dynamic> romanceMovies = [];
+  List<dynamic> romanticComedyMovies = [];
+  List<dynamic> dramaMovies = [];
+  List<dynamic> suspenseMovies = [];
+  List<dynamic> horrorMovies = [];
 
   @override
   void initState() {
@@ -35,12 +39,24 @@ class _HomePageState extends State<HomePage> {
           await ApiConfig.fetchActionMovies();
       final List<dynamic> fetchedRomanceMovies =
           await ApiConfig.fetchRomanceMovies();
+      final List<dynamic> fetchedRomanticComedyMovies =
+          await ApiConfig.fetchRomanticComedyMovies();
+      final List<dynamic> fetchedDramaMovies =
+          await ApiConfig.fetchDramaMovies();
+      final List<dynamic> fetchedSuspenseMovies =
+          await ApiConfig.fetchSuspenseMovies();
+      final List<dynamic> fetchedHorrorMovies =
+          await ApiConfig.fetchHorrorMovies();
 
       setState(() {
         movies = fetchedMovies;
         comedyMovies = fetchedComedyMovies;
         actionMovies = fetchedActionMovies;
         romanceMovies = fetchedRomanceMovies;
+        romanticComedyMovies = fetchedRomanticComedyMovies;
+        dramaMovies = fetchedDramaMovies;
+        suspenseMovies = fetchedSuspenseMovies;
+        horrorMovies = fetchedHorrorMovies;
       });
     } catch (e) {
       print('Error fetching movies: $e');
@@ -98,41 +114,54 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 child: Container(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl:
-                            'https://image.tmdb.org/t/p/original${firstMovie['backdrop_path']}',
-                        placeholder: (context, url) =>
-                            CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                        fit: BoxFit.cover,
-                        height: 300,
-                      ),
-                      Text(
-                        firstMovie['title'],
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      RatingBarIndicator(
-                        rating: firstMovie['vote_average'].toDouble() / 2,
-                        itemCount: 5,
-                        itemSize: 20.0,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, _) => const Icon(
-                          Icons.star,
-                          color: Colors.amber,
+                  padding: EdgeInsets.all(4),
+                  child: SizedBox(
+                    width: 200,
+                    child: Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    'https://image.tmdb.org/t/p/original${firstMovie['backdrop_path']}',
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                fit: BoxFit.cover,
+                                height: 300,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              firstMovie['title'],
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            RatingBarIndicator(
+                              rating: firstMovie['vote_average'].toDouble() / 2,
+                              itemCount: 5,
+                              itemSize: 20.0,
+                              physics: const BouncingScrollPhysics(),
+                              itemBuilder: (context, _) => const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ],
             if (movies.length > 1) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: const Text(
@@ -160,15 +189,19 @@ class _HomePageState extends State<HomePage> {
                         child: Card(
                           child: Column(
                             children: [
+                              SizedBox(height: 8),
                               Expanded(
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                  fit: BoxFit.cover,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               Padding(
@@ -187,20 +220,40 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 15),
               MovieSection(
                 title: 'Comédia',
                 movies: comedyMovies,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 15),
               MovieSection(
                 title: 'Ação',
                 movies: actionMovies,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 15),
               MovieSection(
                 title: 'Romance',
                 movies: romanceMovies,
+              ),
+              const SizedBox(height: 15),
+              MovieSection(
+                title: 'Comédia Romântica',
+                movies: romanticComedyMovies,
+              ),
+              const SizedBox(height: 15),
+              MovieSection(
+                title: 'Drama',
+                movies: dramaMovies,
+              ),
+              const SizedBox(height: 15),
+              MovieSection(
+                title: 'Suspense',
+                movies: suspenseMovies,
+              ),
+              const SizedBox(height: 15),
+              MovieSection(
+                title: 'Terror',
+                movies: horrorMovies,
               ),
             ],
           ],
@@ -253,16 +306,16 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.black),
+            icon: Icon(Icons.add_circle_outline, color: Colors.black),
             activeIcon:
-                Icon(Icons.favorite, color: Color.fromARGB(255, 8, 73, 126)),
+                Icon(Icons.add_circle, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Wishlist',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_play, color: Colors.black),
-            activeIcon: Icon(Icons.playlist_play,
-                color: Color.fromARGB(255, 8, 73, 126)),
+            icon: Icon(Icons.turned_in_not, color: Colors.black),
+            activeIcon:
+                Icon(Icons.turned_in, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'WatchedList',
             backgroundColor: Colors.white,
           ),
@@ -309,15 +362,21 @@ class MovieSection extends StatelessWidget {
                   child: Card(
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: 8,
+                        ),
                         Expanded(
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                            fit: BoxFit.cover,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Padding(

@@ -1,8 +1,9 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:pipocou_filmes/screens/T06_home.dart';
 import 'package:pipocou_filmes/screens/T07_menu.dart';
 import 'package:pipocou_filmes/screens/T09_pesquisa.dart';
-import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
+
+import 'T11_watchedlist.dart';
 
 class WishListPage extends StatefulWidget {
   @override
@@ -104,15 +105,15 @@ class _WishListPageState extends State<WishListPage> {
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.black),
+            icon: Icon(Icons.add_circle_outline, color: Colors.black),
             activeIcon:
-                Icon(Icons.favorite, color: Color.fromARGB(255, 8, 73, 126)),
+                Icon(Icons.add_circle, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Wishlist',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_play, color: Colors.black),
-            activeIcon: Icon(Icons.playlist_play,
+            icon: Icon(Icons.turned_in_not, color: Colors.black),
+            activeIcon: Icon(Icons.turned_in,
                 color: Color.fromARGB(255, 8, 73, 126)),
             label: 'WatchedList',
             backgroundColor: Colors.white,
@@ -121,72 +122,4 @@ class _WishListPageState extends State<WishListPage> {
       ),
     );
   }
-}*/
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-
-class WishListPage extends StatefulWidget {
-  @override
-  _WishListPageState createState() => _WishListPageState();
 }
-
-class _WishListPageState extends State<WishListPage> {
-  List<Map<String, dynamic>> wishList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchWishListFromFirebase();
-  }
-
-  void fetchWishListFromFirebase() async {
-    // Obtenha o ID do usuário atual (você pode usar o mesmo método que definiu em PesquisaPage)
-    String? userID = 'User';
-
-    if (userID!= null) {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(userID)
-          .collection('userFavorites')
-          .get();
-
-      List<Map<String, dynamic>> fetchedWishList = [];
-
-      querySnapshot.docs.forEach((doc) {
-        Map<String, dynamic> movie = {
-          'title': doc.get('title'),
-          'genre': doc.get('genre'),
-          // outros campos relevantes
-        };
-        fetchedWishList.add(movie);
-      });
-
-      setState(() {
-        wishList = fetchedWishList;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Wishlist'),
-      ),
-      body: ListView.builder(
-        itemCount: wishList.length,
-        itemBuilder: (BuildContext context, int index) {
-          final movie = wishList[index];
-          return ListTile(
-            title: Text(movie['title']),
-            subtitle: Text(movie['genre']),
-            // outros campos relevantes
-          );
-        },
-      ),
-    );
-  }
-}
-

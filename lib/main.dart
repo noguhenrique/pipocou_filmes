@@ -34,6 +34,9 @@ class PipocouFilmes extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        cardColor: Colors.grey.shade300, // Definindo a cor da barra de digitação como preta
+      ),
       home: SplashScreen(),
       routes: {
         '/login': (context) => LoginPage(),

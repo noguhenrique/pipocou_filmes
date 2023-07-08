@@ -46,6 +46,8 @@ dependencies:
   url_launcher: ^6.1.11
   share: ^2.0.4
   flutter_share: ^2.0.0
+  hovering: ^1.0.4
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

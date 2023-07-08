@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:pipocou_filmes/API/tmdb_api.dart';
-import 'package:pipocou_filmes/screens/T06_home.dart';
+import 'package:hovering/hovering.dart';
 
 class FilmePage extends StatefulWidget {
   final dynamic movie;
@@ -33,6 +35,11 @@ class _FilmePageState extends State<FilmePage> {
     }
   }
 
+  String formatDate(DateTime date) {
+    final formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,10 +49,7 @@ class _FilmePageState extends State<FilmePage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_sharp, color: Colors.black),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            Navigator.pop(context);
           },
         ),
         title: Container(
@@ -68,82 +72,74 @@ class _FilmePageState extends State<FilmePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 250,
-                  height: 350,
-                  margin: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        'https://image.tmdb.org/t/p/w500${widget.movie['poster_path']}',
-                      ),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          'https://image.tmdb.org/t/p/original${widget.movie['backdrop_path']}',
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                       fit: BoxFit.cover,
+                      height: 300,
                     ),
                   ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 16),
-                      Text(
-                        'Data de lançamento: ${widget.movie['release_date']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Avaliação do público: ${widget.movie['vote_average'].toDouble()}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Classificação indicativa: ${widget.movie['adult'] ? '18+' : 'Livre'}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Duração: ${widget.movie['runtime'] != null ? '${widget.movie['runtime'].toString()} minutos' : 'N/A'}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      RatingBarIndicator(
-                        rating: widget.movie['vote_average'].toDouble() / 2,
-                        itemCount: 5,
-                        itemSize: 20.0,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, _) => const Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            Container(
+              padding: EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    widget.movie['title'],
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  RatingBarIndicator(
+                    rating: widget.movie['vote_average'].toDouble() / 2,
+                    itemCount: 5,
+                    itemSize: 20.0,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, _) => const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Avaliação do público: ${widget.movie['vote_average'].toDouble()}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Data de lançamento: ${formatDate(DateTime.parse(widget.movie['release_date']))}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Classificação indicativa: ${widget.movie['adult'] ? '18+' : 'Livre'}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 16),
                   const Text(
                     'Sinopse',
                     style: TextStyle(
@@ -169,24 +165,19 @@ class _FilmePageState extends State<FilmePage> {
                         List<dynamic> movieGenres = snapshot.data!;
                         List genreNames = getGenreNames(
                             widget.movie['genre_ids'], movieGenres);
-                        return Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: genreNames.map((genreName) {
-                            return Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                genreName,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                        String genresText = '';
+
+                        if (genreNames.length == 1) {
+                          genresText = genreNames[0] + '.';
+                        } else if (genreNames.length > 1) {
+                          genresText = genreNames.join(', ') + '.';
+                        }
+
+                        return Text(
+                          genresText,
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
                         );
                       } else if (snapshot.hasError) {
                         return Text('Failed to fetch movie genres');
@@ -211,9 +202,36 @@ class _FilmePageState extends State<FilmePage> {
                       itemCount: movieCredits.length,
                       itemBuilder: (context, index) {
                         final actor = movieCredits[index];
-                        return Padding(
-                          padding: EdgeInsets.only(right: 8),
+                        return HoverWidget(
                           child: Column(
+                            children: [
+                              Tooltip(
+                                message: actor['name'],
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        'https://image.tmdb.org/t/p/w500${actor['profile_path']}',
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Opacity(
+                                opacity: 0.0,
+                                child: Text(
+                                  actor['name'],
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ],
+                          ),
+                          hoverChild: Column(
                             children: [
                               Container(
                                 width: 80,
@@ -235,6 +253,7 @@ class _FilmePageState extends State<FilmePage> {
                               ),
                             ],
                           ),
+                          onHover: (event) {},
                         );
                       },
                     ),

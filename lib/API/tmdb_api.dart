@@ -96,18 +96,78 @@ class ApiConfig {
     }
   }
 
-  static Future<List<dynamic>> fetchMovieCredits(int movieId) async {
-  final String url = '$baseUrl/movie/$movieId/credits?api_key=$apiKey&language=$language';
+  static Future<List<dynamic>> fetchDramaMovies() async {
+    final String url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=$language&with_genres=18';
 
-  final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> data = json.decode(response.body);
-    final List<dynamic> fetchedCredits = data['cast'];
-    return fetchedCredits;
-  } else {
-    throw Exception('Failed to fetch movie credits');
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> fetchedMovies = data['results'];
+      return fetchedMovies;
+    } else {
+      throw Exception('Failed to fetch drama movies');
+    }
   }
-}
 
+  static Future<List<dynamic>> fetchSuspenseMovies() async {
+    final String url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=$language&with_genres=9648';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> fetchedMovies = data['results'];
+      return fetchedMovies;
+    } else {
+      throw Exception('Failed to fetch suspense movies');
+    }
+  }
+
+  static Future<List<dynamic>> fetchHorrorMovies() async {
+    final String url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=$language&with_genres=27';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> fetchedMovies = data['results'];
+      return fetchedMovies;
+    } else {
+      throw Exception('Failed to fetch horror movies');
+    }
+  }
+
+  static Future<List<dynamic>> fetchRomanticComedyMovies() async {
+    final String url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=$language&with_genres=10749,35';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> fetchedMovies = data['results'];
+      return fetchedMovies;
+    } else {
+      throw Exception('Failed to fetch romantic comedy movies');
+    }
+  }
+
+  static Future<List<dynamic>> fetchMovieCredits(int movieId) async {
+    final String url =
+        '$baseUrl/movie/$movieId/credits?api_key=$apiKey&language=$language';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> fetchedCredits = data['cast'];
+      return fetchedCredits;
+    } else {
+      throw Exception('Failed to fetch movie credits');
+    }
+  }
 }

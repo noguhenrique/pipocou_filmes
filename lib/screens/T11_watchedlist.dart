@@ -104,15 +104,15 @@ class _WatchedListPageState extends State<WatchedListPage> {
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.black),
+            icon: Icon(Icons.add_circle_outline, color: Colors.black),
             activeIcon:
-                Icon(Icons.favorite, color: Color.fromARGB(255, 8, 73, 126)),
+                Icon(Icons.add_circle, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Wishlist',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_play, color: Colors.black),
-            activeIcon: Icon(Icons.playlist_play,
+            icon: Icon(Icons.turned_in_not, color: Colors.black),
+            activeIcon: Icon(Icons.turned_in,
                 color: Color.fromARGB(255, 8, 73, 126)),
             label: 'WatchedList',
             backgroundColor: Colors.white,

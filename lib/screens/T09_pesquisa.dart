@@ -31,14 +31,14 @@ class _PesquisaPageState extends State<PesquisaPage> {
     }
   }
 
-Future<String?> getCurrentUserID() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    return user.uid;
-  } else {
-    return null;
+  Future<String?> getCurrentUserID() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user.uid;
+    } else {
+      return null;
+    }
   }
-}
 
   void toggleFavorite(String movieTitle) async {
     if (userID == null) {
@@ -60,15 +60,16 @@ Future<String?> getCurrentUserID() async {
     });
   }
 
-  void addFavoriteToFirebase(String userID, String movieTitle, String movieGenre) {
+  void addFavoriteToFirebase(
+      String userID, String movieTitle, String movieGenre) {
     FirebaseFirestore.instance
         .collection('usuarios')
         .doc(userID)
         .collection('userFavorites')
         .add({
-          'title': movieTitle,
-          'genre': movieGenre,
-        });
+      'title': movieTitle,
+      'genre': movieGenre,
+    });
   }
 
   void removeFavoriteFromFirebase(String userID, String movieTitle) {
@@ -79,10 +80,10 @@ Future<String?> getCurrentUserID() async {
         .where('title', isEqualTo: movieTitle)
         .get()
         .then((querySnapshot) {
-          querySnapshot.docs.forEach((doc) {
-            doc.reference.delete();
-          });
-        });
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
   }
 
   void navigateToFilmePage(dynamic movie) {
@@ -103,8 +104,11 @@ Future<String?> getCurrentUserID() async {
   void fetchFavoritesFromFirebase() async {
     userID = await getCurrentUserID();
     if (userID != null) {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('usuarios').doc(userID).collection('userFavorites').get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(userID)
+          .collection('userFavorites')
+          .get();
 
       List<String> fetchedFavorites = [];
 
@@ -161,14 +165,28 @@ Future<String?> getCurrentUserID() async {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Colors.white,
+                color: Colors.transparent,
               ),
               child: TextField(
                 decoration: InputDecoration(
                   labelText: 'Pesquisar',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: Icon(Icons.search,
+                      color:
+                          Colors.black), // Definindo a cor do ícone como preta
+                  labelStyle: TextStyle(
+                      color: Colors
+                          .black), // Definindo a cor do texto do label como preta
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                        color: Colors
+                            .black), // Definindo a cor da borda do TextField como preta
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                        color: Colors
+                            .black), // Definindo a cor da borda do TextField como preta quando ativado
                   ),
                 ),
                 onSubmitted: searchMovies,
@@ -217,6 +235,9 @@ Future<String?> getCurrentUserID() async {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
                                   Text(
                                     movieTitle,
                                     style: TextStyle(
@@ -227,14 +248,6 @@ Future<String?> getCurrentUserID() async {
                                   SizedBox(height: 8),
                                   Text(
                                     'Ano de lançamento: ${movie['release_date'].substring(0, 4)}',
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    'Duração: ${movie['runtime'] != null ? '${movie['runtime']} minutos' : 'N/A'}',
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    'Classificação indicativa: ${movie['adult'] ? '18+' : 'Livre'}',
                                   ),
                                   SizedBox(height: 8),
                                   RatingBarIndicator(
@@ -248,16 +261,31 @@ Future<String?> getCurrentUserID() async {
                                       color: Colors.amber,
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: Icon(
-                                      isFavorite
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: isFavorite ? Colors.red : null,
-                                    ),
-                                    onPressed: () {
-                                      toggleFavorite(movieTitle);
-                                    },
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          isFavorite
+                                              ? Icons.add_circle
+                                              : Icons.add_circle_outline,
+                                          color:
+                                              isFavorite ? Colors.black : null,
+                                        ),
+                                        onPressed: () {
+                                          toggleFavorite(movieTitle);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          isFavorite
+                                              ? Icons.turned_in
+                                              : Icons.turned_in_not,
+                                          color:
+                                              isFavorite ? Colors.black : null,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -326,16 +354,16 @@ Future<String?> getCurrentUserID() async {
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.black),
+            icon: Icon(Icons.add_circle_outline, color: Colors.black),
             activeIcon:
-                Icon(Icons.favorite, color: Color.fromARGB(255, 8, 73, 126)),
+                Icon(Icons.add_circle, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'Wishlist',
             backgroundColor: Colors.white,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_play, color: Colors.black),
-            activeIcon: Icon(Icons.playlist_play,
-                color: Color.fromARGB(255, 8, 73, 126)),
+            icon: Icon(Icons.turned_in_not, color: Colors.black),
+            activeIcon:
+                Icon(Icons.turned_in, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'WatchedList',
             backgroundColor: Colors.white,
           ),
