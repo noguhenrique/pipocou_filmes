@@ -113,8 +113,8 @@ class _WishListPageState extends State<WishListPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.turned_in_not, color: Colors.black),
-            activeIcon: Icon(Icons.turned_in,
-                color: Color.fromARGB(255, 8, 73, 126)),
+            activeIcon:
+                Icon(Icons.turned_in, color: Color.fromARGB(255, 8, 73, 126)),
             label: 'WatchedList',
             backgroundColor: Colors.white,
           ),

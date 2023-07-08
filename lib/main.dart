@@ -1,7 +1,7 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'API/firebase_options.dart';
 
 import 'package:pipocou_filmes/screens/T01_splash_screen.dart';
 import 'package:pipocou_filmes/screens/T02_tela_login.dart';

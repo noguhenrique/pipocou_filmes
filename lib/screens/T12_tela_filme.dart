@@ -73,49 +73,53 @@ class _FilmePageState extends State<FilmePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          'https://image.tmdb.org/t/p/original${widget.movie['backdrop_path']}',
-                      placeholder: (context, url) =>
-                          CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                      fit: BoxFit.cover,
-                      height: 300,
-                    ),
+              padding: EdgeInsets.all(4),
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              'https://image.tmdb.org/t/p/original${widget.movie['backdrop_path']}',
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          fit: BoxFit.cover,
+                          height: 300,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        widget.movie['title'],
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      RatingBarIndicator(
+                        rating: widget.movie['vote_average'].toDouble() / 2,
+                        itemCount: 5,
+                        itemSize: 20.0,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.symmetric(horizontal: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.movie['title'],
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  RatingBarIndicator(
-                    rating: widget.movie['vote_average'].toDouble() / 2,
-                    itemCount: 5,
-                    itemSize: 20.0,
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context, _) => const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                  ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 3),
                   Text(
                     'Avaliação do público: ${widget.movie['vote_average'].toDouble()}',
                     style: TextStyle(
