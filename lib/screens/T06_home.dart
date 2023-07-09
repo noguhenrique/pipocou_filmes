@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              firstMovie['title'],
+                              '${firstMovie['title']} (${DateTime.parse(firstMovie['release_date']).year})',
                               style: TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold),
                             ),

@@ -43,46 +43,11 @@ class MenuPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          Divider(
+          const Divider(
             color: Colors.black,
             thickness: 1.0,
           ),
-          ListTile(
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            leading: Icon(
-              Icons.notifications_active,
-              size: 50,
-            ),
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Notificações',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  'Receba notificações diárias do aplicativo.',
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-            dense: true,
-            visualDensity: VisualDensity.compact,
-          ),
-          Divider(
-            thickness: 1,
-            color: Colors.black,
-          ),
-          ListTile(
+          const ListTile(
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 8,

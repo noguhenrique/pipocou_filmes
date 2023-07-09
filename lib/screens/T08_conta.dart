@@ -169,11 +169,37 @@ class _ContaPageState extends State<ContaPage> {
                 if (user != null) {
                   String userId = user.uid;
 
-                  // Apagar o documento "usuarios" do usuário no Cloud Firestore
-                  await FirebaseFirestore.instance
-                      .collection('usuarios')
-                      .doc(userId)
-                      .delete();
+                  // Criar uma transação em lote para excluir os documentos das subcoleções
+                WriteBatch batch = FirebaseFirestore.instance.batch();
+                CollectionReference wishlistCollection = FirebaseFirestore.instance
+                    .collection('usuarios')
+                    .doc(userId)
+                    .collection('wishlist');
+                CollectionReference watchedListCollection = FirebaseFirestore.instance
+                    .collection('usuarios')
+                    .doc(userId)
+                    .collection('watchedlist');
+
+                // Excluir todos os documentos da subcoleção "wishlist"
+                QuerySnapshot wishlistSnapshot = await wishlistCollection.get();
+                for (DocumentSnapshot doc in wishlistSnapshot.docs) {
+                  batch.delete(doc.reference);
+                }
+
+                // Excluir todos os documentos da subcoleção "watchedlist"
+                QuerySnapshot watchedListSnapshot = await watchedListCollection.get();
+                for (DocumentSnapshot doc in watchedListSnapshot.docs) {
+                  batch.delete(doc.reference);
+                }
+
+                // Executar a transação em lote para excluir os documentos das subcoleções
+                await batch.commit();
+
+                // Excluir o documento "usuarios" do usuário no Cloud Firestore
+                await FirebaseFirestore.instance
+                    .collection('usuarios')
+                    .doc(userId)
+                    .delete();
 
                   try {
                     // Apagar a conta do usuário

@@ -157,8 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                               'Esqueceu sua senha?',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
+                                color: Colors.black,
                               ),
                             ),
                           ),

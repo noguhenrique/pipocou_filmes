@@ -45,7 +45,7 @@ class _TrocaSenhaPageState extends State<TrocaSenhaPage> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Verifique sua caixa de entrada de e-mail para encontrar o e-mail contendo o link de redefinição de senha.',
+              'Verifique sua caixa de entrada e spam para encontrar o e-mail contendo o link de redefinição de senha.',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16),
             ),
@@ -69,7 +69,7 @@ class _TrocaSenhaPageState extends State<TrocaSenhaPage> {
                   IconButton(
                     icon: Icon(
                       _checkPressed ? Icons.check_box : Icons.check_box_outline_blank,
-                      color: _checkPressed ? Colors.blue : Colors.grey,
+                      color: _checkPressed ? Colors.black : Colors.grey,
                     ),
                     onPressed: _toggleCheck,
                   ),

@@ -170,4 +170,19 @@ class ApiConfig {
       throw Exception('Failed to fetch movie credits');
     }
   }
+
+  static Future<Map<String, dynamic>?> fetchMovieDetails(String movieId) async {
+    final String url =
+        '$baseUrl/movie/$movieId?api_key=$apiKey&language=$language';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to fetch movie details');
+    }
+  }
+
 }

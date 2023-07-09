@@ -14,8 +14,6 @@ import 'package:pipocou_filmes/screens/T08_conta.dart';
 import 'package:pipocou_filmes/screens/T09_pesquisa.dart';
 import 'package:pipocou_filmes/screens/T10_whishlist.dart';
 import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
-//import 'package:pipocou_filmes/screens/T12_tela_filme.dart';
-import 'package:pipocou_filmes/screens/T13_tela_compartilhamento.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +33,8 @@ class PipocouFilmes extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        cardColor: Colors.grey.shade300, // Definindo a cor da barra de digitação como preta
+        cardColor: Colors
+            .grey.shade300, // Definindo a cor da barra de digitação como preta
       ),
       home: SplashScreen(),
       routes: {
@@ -49,8 +48,6 @@ class PipocouFilmes extends StatelessWidget {
         '/pesquisa': (context) => PesquisaPage(),
         '/whishlist': (context) => WishListPage(),
         '/watchedlist': (context) => WatchedListPage(),
-        //  '/filme': (context) => FilmePage(),
-        '/compartilhamento': (context) => CompartilhamentoPage(),
       },
     );
   }
