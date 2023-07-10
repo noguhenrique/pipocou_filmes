@@ -25,7 +25,6 @@ class _FilmePageState extends State<FilmePage> {
   void initState() {
     super.initState();
     fetchMovieCredits();
-    checkWishlistStatus(); // Verifica se o filme está na wishlist do usuário
     checkWishlistStatus();
     checkWatchedListStatus();
   }

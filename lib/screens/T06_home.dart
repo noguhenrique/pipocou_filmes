@@ -263,7 +263,8 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Color.fromARGB(255, 10, 63, 106),
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 1) {
+          if (index == 0) {
+          } else if (index == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(

@@ -74,7 +74,8 @@ class _WatchedListPageState extends State<WatchedListPage> {
           'pontuacao': movieDetails['vote_average'],
         };
 
-        final isInWatchedList = await isMovieInWatchedList(movieDetails['id'].toString()); // Verifica se o filme está na watchedlist
+        final isInWatchedList = await isMovieInWatchedList(movieDetails['id']
+            .toString()); // Verifica se o filme está na watchedlist
 
         if (isInWatchedList) {
           // Exibe a caixa de diálogo de confirmação
@@ -82,21 +83,24 @@ class _WatchedListPageState extends State<WatchedListPage> {
             context: context,
             builder: (context) => AlertDialog(
               title: Text('Adicionar à Wishlist'),
-              content: Text('Deseja remover o filme da Watchedlist e adicioná-lo à Wishlist?'),
+              content: Text(
+                  'Deseja remover o filme da Watchedlist e adicioná-lo à Wishlist?'),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
                   ),
                   child: Text('Cancelar'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     // Remove o filme da watchedlist
-                    await removeFromWatchedList(movieDetails['id'].toString(), false);
+                    await removeFromWatchedList(
+                        movieDetails['id'].toString(), false);
 
                     // Adiciona o filme à wishlist
                     await FirebaseFirestore.instance
@@ -114,7 +118,8 @@ class _WatchedListPageState extends State<WatchedListPage> {
                     });
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
                   ),
                   child: Text('Confirmar'),
                 ),
@@ -161,7 +166,8 @@ class _WatchedListPageState extends State<WatchedListPage> {
     return false;
   }
 
-  Future<void> removeFromWatchedList(String movieId,bool showConfirmationDialog) async {
+  Future<void> removeFromWatchedList(
+      String movieId, bool showConfirmationDialog) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -178,7 +184,8 @@ class _WatchedListPageState extends State<WatchedListPage> {
                     Navigator.of(context).pop();
                   },
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
                   ),
                   child: Text('Cancelar'),
                 ),
@@ -195,7 +202,8 @@ class _WatchedListPageState extends State<WatchedListPage> {
                     });
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
                   ),
                   child: Text('Remover'),
                 ),
@@ -358,8 +366,7 @@ class _WatchedListPageState extends State<WatchedListPage> {
                                                   isWish ? Colors.black : null,
                                             ),
                                             onPressed: () {
-                                                addToWishlist(movieDetails);
-                                              
+                                              addToWishlist(movieDetails);
                                             },
                                           ),
                                           IconButton(
@@ -432,14 +439,7 @@ class _WatchedListPageState extends State<WatchedListPage> {
                 builder: (_) => WishListPage(),
               ),
             );
-          } else if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => WatchedListPage(),
-              ),
-            );
-          }
+          } else if (index == 3) {}
 
           setState(() {
             _currentIndex = index;

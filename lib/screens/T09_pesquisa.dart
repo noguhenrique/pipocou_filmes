@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pipocou_filmes/API/tmdb_api.dart';
@@ -15,13 +17,24 @@ class PesquisaPage extends StatefulWidget {
 class _PesquisaPageState extends State<PesquisaPage> {
   int _currentIndex = 1;
   List<dynamic> searchResults = [];
+  TextEditingController _searchController = TextEditingController();
+  List<bool> isWishList = [];
+  List<bool> isWatchedList = [];
 
   Future<void> searchMovies(String query) async {
     try {
       List<dynamic> fetchedMovies = await ApiConfig.searchMovies(query);
       setState(() {
         searchResults = fetchedMovies;
+        isWishList = List.filled(fetchedMovies.length, false);
+        isWatchedList = List.filled(fetchedMovies.length, false);
       });
+
+      for (int i = 0; i < fetchedMovies.length; i++) {
+        final movie = fetchedMovies[i];
+        await checkWishlistStatus(movie, i);
+        await checkWatchedListStatus(movie, i);
+      }
     } catch (e) {
       print('Error searching movies: $e');
     }
@@ -34,6 +47,274 @@ class _PesquisaPageState extends State<PesquisaPage> {
         builder: (_) => FilmePage(movie: movie),
       ),
     );
+  }
+
+  void clearSearch() {
+    setState(() {
+      _searchController.clear();
+      searchResults.clear();
+      isWishList.clear();
+      isWatchedList.clear();
+    });
+  }
+
+  Future<void> checkWishlistStatus(dynamic movie, int index) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .collection('wishlist')
+            .doc(movie['id'].toString())
+            .get();
+
+        setState(() {
+          isWishList[index] = snapshot.exists;
+        });
+      }
+    } catch (e) {
+      print('Error checking wishlist status: $e');
+    }
+  }
+
+  Future<void> checkWatchedListStatus(dynamic movie, int index) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .collection('watchedlist')
+            .doc(movie['id'].toString())
+            .get();
+
+        setState(() {
+          isWatchedList[index] = snapshot.exists;
+        });
+      }
+    } catch (e) {
+      print('Error checking watchedlist status: $e');
+    }
+  }
+
+  void addToWishlist(dynamic movie, int index) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final filmeData = {
+          'id': movie['id'],
+          'nome': movie['title'],
+          'ano': DateTime.parse(movie['release_date']).year,
+          'urlPoster':
+              'https://image.tmdb.org/t/p/original${movie['backdrop_path']}',
+          'pontuacao': movie['vote_average'],
+        };
+
+        final isInWatchedList = await isMovieInWatchedList(movie);
+
+        if (isInWatchedList) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Adicionar à Wishlist'),
+              content: Text(
+                  'Deseja remover o filme da Watchedlist e adicioná-lo à Wishlist?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                  ),
+                  child: Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    removeFromWatchedList(movie, index, false);
+
+                    await FirebaseFirestore.instance
+                        .collection('usuarios')
+                        .doc(user.uid)
+                        .collection('wishlist')
+                        .doc(movie['id'].toString())
+                        .set(filmeData);
+
+                    setState(() {
+                      isWatchedList[index] = false;
+                      isWishList[index] = true;
+                    });
+
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                  ),
+                  child: Text('Confirmar'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          await FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(user.uid)
+              .collection('wishlist')
+              .doc(movie['id'].toString())
+              .set(filmeData);
+
+          setState(() {
+            isWishList[index] = true;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error adding to wishlist: $e');
+    }
+  }
+
+  Future<bool> isMovieInWatchedList(dynamic movie) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .collection('watchedlist')
+            .doc(movie['id'].toString())
+            .get();
+
+        return snapshot.exists;
+      }
+    } catch (e) {
+      print('Error checking watchedlist status: $e');
+    }
+
+    return false;
+  }
+
+  void addToWatchedList(dynamic movie, int index) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final filmeData = {
+          'id': movie['id'],
+          'nome': movie['title'],
+          'ano': DateTime.parse(movie['release_date']).year,
+          'urlPoster':
+              'https://image.tmdb.org/t/p/original${movie['backdrop_path']}',
+          'pontuacao': movie['vote_average'],
+        };
+
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .collection('watchedlist')
+            .doc(movie['id'].toString())
+            .set(filmeData);
+
+        removeFromWishlist(movie, index);
+
+        setState(() {
+          isWatchedList[index] = true;
+        });
+      }
+    } catch (e) {
+      print('Error adding to watchedlist: $e');
+    }
+  }
+
+  void removeFromWishlist(dynamic movie, int index) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .collection('wishlist')
+            .doc(movie['id'].toString())
+            .delete();
+
+        setState(() {
+          isWishList[index] = false;
+        });
+      }
+    } catch (e) {
+      print('Error removing from wishlist: $e');
+    }
+  }
+
+  void removeFromWatchedList(
+      dynamic movie, int index, bool showConfirmationDialog) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        if (showConfirmationDialog) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Remover da Watchedlist'),
+              content: Text('Deseja remover o filme da Watchedlist?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                  ),
+                  child: Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await FirebaseFirestore.instance
+                        .collection('usuarios')
+                        .doc(user.uid)
+                        .collection('watchedlist')
+                        .doc(movie['id'].toString())
+                        .delete();
+
+                    setState(() {
+                      isWatchedList[index] = false;
+                    });
+
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                  ),
+                  child: Text('Remover'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          await FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(user.uid)
+              .collection('watchedlist')
+              .doc(movie['id'].toString())
+              .delete();
+
+          setState(() {
+            isWatchedList[index] = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error removing from watchedlist: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -81,21 +362,22 @@ class _PesquisaPageState extends State<PesquisaPage> {
                 color: Colors.transparent,
               ),
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
                   labelText: 'Pesquisar',
-                  prefixIcon: Icon(Icons.search,
-                      color: Colors.black),
-                  labelStyle: TextStyle(
-                      color: Colors.black),
+                  prefixIcon: Icon(Icons.search, color: Colors.black),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear, color: Colors.black),
+                    onPressed: clearSearch,
+                  ),
+                  labelStyle: TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                        color: Colors.black),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                        color: Colors.black),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
                 onSubmitted: searchMovies,
@@ -169,6 +451,42 @@ class _PesquisaPageState extends State<PesquisaPage> {
                                       color: Colors.amber,
                                     ),
                                   ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          isWishList[index]
+                                              ? Icons.add_circle
+                                              : Icons.add_circle_outline,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          if (isWishList[index]) {
+                                            removeFromWishlist(movie, index);
+                                          } else {
+                                            addToWishlist(movie, index);
+                                          }
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          isWatchedList[index]
+                                              ? Icons.turned_in
+                                              : Icons.turned_in_not,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          if (isWatchedList[index]) {
+                                            removeFromWatchedList(
+                                                movie, index, true);
+                                          } else {
+                                            addToWatchedList(movie, index);
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -178,6 +496,22 @@ class _PesquisaPageState extends State<PesquisaPage> {
                     ),
                   );
                 },
+              ),
+            ),
+          if (searchResults.isEmpty && _searchController.text.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'Procure por um filme pelo título.',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          if (searchResults.isEmpty && !_searchController.text.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'Nenhum resultado encontrado.',
+                style: TextStyle(fontSize: 16),
               ),
             ),
         ],
@@ -194,12 +528,6 @@ class _PesquisaPageState extends State<PesquisaPage> {
               ),
             );
           } else if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => PesquisaPage(),
-              ),
-            );
           } else if (index == 2) {
             Navigator.push(
               context,

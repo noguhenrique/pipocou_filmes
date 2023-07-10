@@ -42,7 +42,7 @@ class _CompartilhamentoPageState extends State<CompartilhamentoPage> {
       await Share.shareFiles(
         [imagePath],
         text:
-            'Fiz uma descoberta no Pipocou Filmes: ${widget.movie['title']} (${DateTime.parse(widget.movie['release_date']).year}) \n Confira mais em: https://play.google.com/store/apps/details?id=pipocoufilmes',
+            'Fiz uma descoberta no Pipocou Filmes: ${widget.movie['title']} (${DateTime.parse(widget.movie['release_date']).year})! \n Confira mais em: https://play.google.com/store/apps/details?id=pipocoufilmes',
       );
     } catch (e) {
       print('Erro ao compartilhar imagem: $e');
