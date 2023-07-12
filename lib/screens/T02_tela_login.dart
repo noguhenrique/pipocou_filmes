@@ -18,26 +18,23 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _isShowPassword = false;
+  late SharedPreferences _prefs;
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
-    super.initState();
-    _checkLoginStatus();
+  super.initState();
+  _initPrefs();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-    if (isLoggedIn) {
-      // Redirecionar para a página inicial se o usuário estiver logado
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => HomePage(),
-        ),
-      );
-    }
+  Future<void> _initPrefs() async {
+  _prefs = await SharedPreferences.getInstance();
+  _isLoggedIn = _prefs.getBool('isLoggedIn') ?? false;
+  if (_isLoggedIn) {
+    _navigateToHome();
   }
+}
+
 
   @override
   void dispose() {
@@ -257,22 +254,16 @@ class _LoginPageState extends State<LoginPage> {
       final String password = _passwordController.text;
 
       // Fazer login do usuário com o Firebase
-      final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Armazenar o estado de autenticação localmente
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
+      // Salvar o estado de login nas preferências compartilhadas
+      await _prefs.setBool('isLoggedIn', true);
 
       // Redirecionar para a página inicial após o login bem-sucedido
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => HomePage(),
-        ),
-      );
+      _navigateToHome();
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'Ocorreu um erro ao fazer login';
 
@@ -297,6 +288,15 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
+  void _navigateToHome() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => HomePage(),
+      ),
+    );
+  }
+
 
   void _forgotPassword() {
     Navigator.of(context).push(

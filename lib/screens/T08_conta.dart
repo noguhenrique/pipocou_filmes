@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pipocou_filmes/screens/T02_tela_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'T04_tela_confirmacao_email.dart';
 
 class ContaPage extends StatefulWidget {
@@ -12,11 +15,17 @@ class _ContaPageState extends State<ContaPage> {
   String? _userEmail;
   String? _userName;
   TextEditingController _nameController = TextEditingController();
+  late SharedPreferences _prefs; // Declare a variável _prefs aqui
 
   @override
   void initState() {
     super.initState();
+    _initPrefs(); // Chame o método _initPrefs() para inicializar as preferências compartilhadas
     _loadUserData();
+  }
+
+  Future<void> _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 
   Future<void> _loadUserData() async {
@@ -260,9 +269,19 @@ class _ContaPageState extends State<ContaPage> {
   }
 
   Future<void> _logout() async {
-    FirebaseAuth.instance.signOut();
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-  }
+  // Fazer logout do usuário no Firebase
+  await FirebaseAuth.instance.signOut();
+
+  // Limpar o estado de login nas preferências compartilhadas
+  await _prefs.setBool('isLoggedIn', false);
+
+  // Redirecionar para a tela de login
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(
+      builder: (_) => LoginPage(),
+    ),
+  );
+}
 
   Future<void> _showChangeNameDialog() async {
     return showDialog(
