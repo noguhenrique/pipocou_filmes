@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'T04_tela_confirmacao_email.dart';
 import 'T03_tela_cadastro.dart';
 import 'T06_home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -17,6 +18,26 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _isShowPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      // Redirecionar para a página inicial se o usuário estiver logado
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomePage(),
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -236,10 +257,15 @@ class _LoginPageState extends State<LoginPage> {
       final String password = _passwordController.text;
 
       // Fazer login do usuário com o Firebase
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // Armazenar o estado de autenticação localmente
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
 
       // Redirecionar para a página inicial após o login bem-sucedido
       Navigator.of(context).pushReplacement(
