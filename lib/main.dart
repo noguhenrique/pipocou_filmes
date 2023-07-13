@@ -2,8 +2,6 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'API/firebase_options.dart';
-
-import 'package:pipocou_filmes/screens/T01_splash_screen.dart';
 import 'package:pipocou_filmes/screens/T02_tela_login.dart';
 import 'package:pipocou_filmes/screens/T03_tela_cadastro.dart';
 import 'package:pipocou_filmes/screens/T04_tela_confirmacao_email.dart';
@@ -25,33 +23,83 @@ void main() async {
   runApp(const PipocouFilmes());
 }
 
-class PipocouFilmes extends StatelessWidget {
+class PipocouFilmes extends StatefulWidget {
   const PipocouFilmes({Key? key}) : super(key: key);
+
+  @override
+  _PipocouFilmesState createState() => _PipocouFilmesState();
+}
+
+class _PipocouFilmesState extends State<PipocouFilmes> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    HomePage(),
+    PesquisaPage(),
+    WishListPage(),
+    WatchedListPage(),
+  ];
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        cardColor: Colors
-            .grey.shade300, // Definindo a cor da barra de digitação como preta
+        cardColor: Colors.grey.shade300,
       ),
-      home: SplashScreen(),
+      home: Scaffold(
+        body: _pages[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: Color.fromARGB(255, 10, 63, 106),
+          currentIndex: _currentIndex,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Colors.black),
+              activeIcon:
+                  Icon(Icons.home, color: Color.fromARGB(255, 8, 73, 126)),
+              label: 'Home',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search, color: Colors.black),
+              activeIcon:
+                  Icon(Icons.search, color: Color.fromARGB(255, 8, 73, 126)),
+              label: 'Pesquisa',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle_outline, color: Colors.black),
+              activeIcon: Icon(Icons.add_circle,
+                  color: Color.fromARGB(255, 8, 73, 126)),
+              label: 'WishList',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.turned_in_not, color: Colors.black),
+              activeIcon:
+                  Icon(Icons.turned_in, color: Color.fromARGB(255, 8, 73, 126)),
+              label: 'WatchedList',
+              backgroundColor: Colors.white,
+            ),
+          ],
+          onTap: _onTabTapped,
+        ),
+      ),
       routes: {
+        'pipocou':(context) => PipocouFilmes(),
         '/login': (context) => LoginPage(),
         '/cadastro': (context) => CadastroPage(),
         '/confirmacao': (context) => ConfirmacaoEmailPage(),
         '/troca': (context) => TrocaSenhaPage(),
-        '/home': (context) => HomePage(),
         '/menu': (context) => MenuPage(),
         '/conta': (context) => ContaPage(),
-        '/pesquisa': (context) => PesquisaPage(),
-        '/whishlist': (context) => WishListPage(),
-        '/watchedlist': (context) => WatchedListPage(),
       },
     );
   }
 }
-
-
-// indentar automático Shift+Alt+F

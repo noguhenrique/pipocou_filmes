@@ -16,7 +16,15 @@ class _ContaPageState extends State<ContaPage> {
   @override
   void initState() {
     super.initState();
+    _checkUserLogin();
     _loadUserData();
+  }
+
+  Future<void> _checkUserLogin() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   Future<void> _loadUserData() async {
@@ -210,7 +218,7 @@ class _ContaPageState extends State<ContaPage> {
                       ),
                     );
                     Navigator.pushNamedAndRemoveUntil(
-                        context, '/login', (route) => false);
+                        context, '/pipocou', (route) => false);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -261,7 +269,7 @@ class _ContaPageState extends State<ContaPage> {
 
   Future<void> _logout() async {
     FirebaseAuth.instance.signOut();
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, '/pipocou', (route) => false);
   }
 
   Future<void> _showChangeNameDialog() async {

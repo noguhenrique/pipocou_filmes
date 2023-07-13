@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pipocou_filmes/API/tmdb_api.dart';
 import 'package:pipocou_filmes/screens/T07_menu.dart';
-import 'package:pipocou_filmes/screens/T09_pesquisa.dart';
-import 'package:pipocou_filmes/screens/T10_whishlist.dart';
-import 'package:pipocou_filmes/screens/T11_watchedlist.dart';
 import 'package:pipocou_filmes/screens/T12_tela_filme.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,7 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
   List<dynamic> movies = [];
   List<dynamic> comedyMovies = [];
   List<dynamic> actionMovies = [];
@@ -258,69 +254,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Color.fromARGB(255, 10, 63, 106),
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          if (index == 0) {
-          } else if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => PesquisaPage(),
-              ),
-            );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => WishListPage(),
-              ),
-            );
-          } else if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => WatchedListPage(),
-              ),
-            );
-          }
-
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.black),
-            activeIcon:
-                Icon(Icons.home, color: Color.fromARGB(255, 8, 73, 126)),
-            label: 'Home',
-            backgroundColor: Colors.white,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search, color: Colors.black),
-            activeIcon:
-                Icon(Icons.search, color: Color.fromARGB(255, 8, 73, 126)),
-            label: 'Pesquisa',
-            backgroundColor: Colors.white,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline, color: Colors.black),
-            activeIcon:
-                Icon(Icons.add_circle, color: Color.fromARGB(255, 8, 73, 126)),
-            label: 'Wishlist',
-            backgroundColor: Colors.white,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.turned_in_not, color: Colors.black),
-            activeIcon:
-                Icon(Icons.turned_in, color: Color.fromARGB(255, 8, 73, 126)),
-            label: 'WatchedList',
-            backgroundColor: Colors.white,
-          ),
-        ],
       ),
     );
   }

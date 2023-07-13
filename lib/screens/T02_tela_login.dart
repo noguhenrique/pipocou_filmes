@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pipocou_filmes/main.dart';
 import 'T04_tela_confirmacao_email.dart';
 import 'T03_tela_cadastro.dart';
-import 'T06_home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
       // Redirecionar para a página inicial após o login bem-sucedido
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => HomePage(),
+          builder: (_) => const PipocouFilmes(),
         ),
       );
     } on FirebaseAuthException catch (e) {
